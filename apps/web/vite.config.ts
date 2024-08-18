@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: "0.0.0.0", // Ensure Vite listens on all interfaces
-    port: 80,
+    port: 8080,
     proxy: {
       "/api": {
         target: "http://0.0.0.0:3000",
