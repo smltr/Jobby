@@ -1,0 +1,19 @@
+modules = ["nodejs-20", "web"]
+run = "pnpm run start:dev"
+
+[nix]
+channel = "stable-24_05"
+
+[deployment]
+run = ["sh", "-c", "cd apps/api && pnpm run start"]
+
+[[ports]]
+localPort = 3000
+externalPort = 8080
+
+[[ports]]
+localPort = 5173
+externalPort = 80
+
+[env]
+REPLIT_KEEP_PACKAGE_DEV_DEPENDENCIES = "1"
