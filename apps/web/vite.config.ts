@@ -7,7 +7,7 @@ export default defineConfig({
     host: '0.0.0.0', // Ensure Vite listens on all interfaces
     proxy: {
       "/api": {
-        target: "http://localhost:3000", // Use 'localhost' as it will be correctly routed by the internal networking
+        target: "http://0.0.0.0:3000", 
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
