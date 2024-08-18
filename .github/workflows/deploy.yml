@@ -50,4 +50,4 @@ jobs:
         gcloud compute ssh trouys16@${{ secrets.INSTANCE_NAME }} \
           --project ${{ secrets.PROJECT_ID }} \
           --zone ${{ secrets.ZONE }} \
-          --command "cd /home/trouys16/Jobby && ./deploy.sh"
+          --command "/home/trouys16/deploy.sh"
