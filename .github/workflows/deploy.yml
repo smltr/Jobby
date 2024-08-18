@@ -1,0 +1,28 @@
+name: Deploy to Google Cloud
+
+on:
+  push:
+    branches:
+      - main  # Trigger deployment on push to main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Google Cloud SDK
+      uses: google-github-actions/setup-gcloud@v0.2.0
+      with:
+        version: 'latest'
+        project_id: ${{ secrets.PROJECT_ID }}
+        service_account_key: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+    - name: Deploy to Google Compute Engine
+      run: |
+        gcloud compute ssh ${{ secrets.INSTANCE_NAME }} \
+          --project ${{ secrets.PROJECT_ID }} \
+          --zone ${{ secrets.ZONE }} \
+          --command "cd /home/trouys16/Jobby && git pull origin main && pnpm i && pnpm run start"
