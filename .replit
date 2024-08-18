@@ -5,7 +5,11 @@ run = "pnpm run start:dev"
 channel = "stable-24_05"
 
 [deployment]
-run = ["sh", "-c", "cd apps/api && pnpm run start"]
+run = ["sh", "-c", "pnpm run start"]
+
+[[ports]]
+localPort = 80
+externalPort = 3000
 
 [[ports]]
 localPort = 3000
@@ -14,6 +18,3 @@ externalPort = 8080
 [[ports]]
 localPort = 5173
 externalPort = 80
-
-[env]
-REPLIT_KEEP_PACKAGE_DEV_DEPENDENCIES = "1"
