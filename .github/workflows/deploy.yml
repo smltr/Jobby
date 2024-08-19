@@ -3,7 +3,7 @@ name: Deploy to Google Cloud
 on:
   push:
     branches:
-      - main  # Trigger deployment on push to main branch
+      - main
 
 jobs:
   deploy:
@@ -22,16 +22,16 @@ jobs:
 
     - name: Ensure SSH key exists
       run: |
-        mkdir -p /home/runner/.ssh
-        if [ ! -f /home/runner/.ssh/google_compute_engine ]; then
-          ssh-keygen -t rsa -f /home/runner/.ssh/google_compute_engine -C "${{ secrets.GITHUB_ACTOR }}" -N ""
+        mkdir -p ~/.ssh
+        if [ ! -f ~/.ssh/google_compute_engine ]; then
+          ssh-keygen -t rsa -f ~/.ssh/google_compute_engine -C "${{ secrets.GITHUB_ACTOR }}" -N ""
         fi
       env:
         CLOUDSDK_METRICS_ENVIRONMENT: github-actions-setup-gcloud
 
     - name: Add SSH key for Google Cloud
       run: |
-        gcloud compute os-login ssh-keys add --key-file=/home/runner/.ssh/google_compute_engine.pub --project ${{ secrets.PROJECT_ID }}
+        gcloud compute os-login ssh-keys add --key-file=~/.ssh/google_compute_engine.pub --project ${{ secrets.PROJECT_ID }}
       env:
         CLOUDSDK_METRICS_ENVIRONMENT: github-actions-setup-gcloud
 
@@ -43,11 +43,16 @@ jobs:
     - name: Add SSH key to SSH agent
       run: |
         eval "$(ssh-agent -s)"
-        ssh-add /home/runner/.ssh/google_compute_engine
+        ssh-add ~/.ssh/google_compute_engine
+
+    - name: Make deploy.sh executable
+      run: gcloud compute ssh trouys16@${{ secrets.INSTANCE_NAME }} \
+          --project ${{ secrets.PROJECT_ID }} \
+          --zone ${{ secrets.ZONE }} \
+          --command "chmod +x /home/trouys16/deploy.sh"
 
     - name: Deploy to Google Compute Engine
-      run: |
-        gcloud compute ssh trouys16@${{ secrets.INSTANCE_NAME }} \
+      run: gcloud compute ssh trouys16@${{ secrets.INSTANCE_NAME }} \
           --project ${{ secrets.PROJECT_ID }} \
           --zone ${{ secrets.ZONE }} \
           --command "/home/trouys16/deploy.sh"

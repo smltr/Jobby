@@ -76,7 +76,7 @@ const App: React.FC = () => {
       >
         <Container maxWidth="sm">
           <Typography variant="body2" color="text.disabled" align="center">
-            Made by me. Source code available at <Link color="text.disabled" href="https://replit.com/@smltr/Jobby?v=1" target="_blank" rel="noopener noreferrer" sx={{ textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>replit.com/@smltr/Jobby</Link>
+            <Link color="text.disabled" href="https://github.com/smltr/Jobby" target="_blank" rel="noopener noreferrer" sx={{ textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>github.com/smltr/Jobby</Link>
           </Typography>
         </Container>
       </Box>
