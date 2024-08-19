@@ -24,9 +24,8 @@ jobs:
       run: |
         mkdir -p ~/.ssh
         if [ ! -f ~/.ssh/google_compute_engine ]; then
-          ssh-keygen -t rsa -f ~/.ssh/google_compute_engine -C "${{ secrets.GITHUB_ACTOR }}" -N ""
+          ssh-keygen -t rsa -f ~/.ssh/google_compute_engine -C "${{ github.actor }}" -N ""
         fi
-        # Verify the key file
         if [ ! -f ~/.ssh/google_compute_engine.pub ]; then
           echo "SSH key file does not exist"
           exit 1
