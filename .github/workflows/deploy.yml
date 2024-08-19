@@ -10,9 +10,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    # Step to check out the repository
     - name: Checkout repository
       uses: actions/checkout@v2
 
+    # Step to set up Google Cloud SDK
     - name: Set up Google Cloud SDK
       uses: google-github-actions/setup-gcloud@v0.2.0
       with:
@@ -20,6 +22,7 @@ jobs:
         project_id: ${{ secrets.PROJECT_ID }}
         service_account_key: ${{ secrets.GOOGLE_CREDENTIALS }}
 
+    # Step to ensure SSH key exists
     - name: Ensure SSH key exists
       run: |
         mkdir -p ~/.ssh
@@ -36,28 +39,33 @@ jobs:
       env:
         CLOUDSDK_METRICS_ENVIRONMENT: github-actions-setup-gcloud
 
+    # Step to add SSH key to Google Cloud OS Login
     - name: Add SSH key for Google Cloud
       run: |
-        gcloud compute os-login ssh-keys add --key-file=~/.ssh/google_compute_engine.pub --project ${{ secrets.PROJECT_ID }}
+        gcloud compute os-login ssh-keys add --key-file ~/.ssh/google_compute_engine.pub --project ${{ secrets.PROJECT_ID }}
       env:
         CLOUDSDK_METRICS_ENVIRONMENT: github-actions-setup-gcloud
 
-    - name: Debug SSH Keys
+    # Step to debug SSH keys
+    - name: Debug SSH keys
       run: gcloud compute os-login ssh-keys list --project ${{ secrets.PROJECT_ID }}
       env:
         CLOUDSDK_METRICS_ENVIRONMENT: github-actions-setup-gcloud
 
+    # Step to add SSH key to the SSH agent
     - name: Add SSH key to SSH agent
       run: |
         eval "$(ssh-agent -s)"
         ssh-add ~/.ssh/google_compute_engine
 
+    # Step to make the deploy.sh script executable
     - name: Make deploy.sh executable
       run: gcloud compute ssh trouys16@${{ secrets.INSTANCE_NAME }} \
           --project ${{ secrets.PROJECT_ID }} \
           --zone ${{ secrets.ZONE }} \
           --command "chmod +x /home/trouys16/deploy.sh"
 
+    # Step to deploy using the script on the instance
     - name: Deploy to Google Compute Engine
       run: gcloud compute ssh trouys16@${{ secrets.INSTANCE_NAME }} \
           --project ${{ secrets.PROJECT_ID }} \
