@@ -58,13 +58,6 @@ jobs:
         eval "$(ssh-agent -s)"
         ssh-add ~/.ssh/google_compute_engine
 
-    # Step to make the deploy.sh script executable
-    - name: Make deploy.sh executable
-      run: gcloud compute ssh trouys16@${{ secrets.INSTANCE_NAME }} \
-          --project ${{ secrets.PROJECT_ID }} \
-          --zone ${{ secrets.ZONE }} \
-          --command "chmod +x /home/trouys16/deploy.sh"
-
     # Step to deploy using the script on the instance
     - name: Deploy to Google Compute Engine
       run: gcloud compute ssh trouys16@${{ secrets.INSTANCE_NAME }} \
