@@ -12,7 +12,7 @@ export class Posting {
   id: number;
 
   @Column()
-  title: string; // Will display after job type, e.g. "Generalist" -> "Full Stack Generalist"
+  title: string; 
 
   @Column()
   company: string;
@@ -24,7 +24,7 @@ export class Posting {
   salaryEnd: number;
 
   @Column()
-  jobType: string; // must be 'Full Stack', 'Front End', or 'Back End'
+  jobType: string; 
 
   @Column()
   postedDate: string;
@@ -36,5 +36,5 @@ export class Posting {
   jobLink: string;
   
   @Column()
-  companyUrl: string; // URL to the company's website
+  companyUrl: string; 
 }
