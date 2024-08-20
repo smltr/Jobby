@@ -112,14 +112,14 @@ const PostJob: React.FC = () => {
         <DialogContent>
           <Box mb={2}>
             <Typography variant="h6">Preview</Typography>
-            <JobItem posting={previewPosting} isNew={false}/>
+            <JobItem posting={previewPosting} isNew={false} isPreview={true}/>
           </Box>
           <form onSubmit={handleSubmit} noValidate>
             <TextField
               fullWidth
               margin="normal"
               name="title"
-              label="Title"
+              label="Job Title"
               value={formData.title}
               onChange={handleChange}
               required
@@ -142,7 +142,7 @@ const PostJob: React.FC = () => {
               fullWidth
               margin="normal"
               name="company"
-              label="Company"
+              label="Company Name"
               value={formData.company}
               onChange={handleChange}
               required
