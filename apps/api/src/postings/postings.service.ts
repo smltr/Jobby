@@ -20,10 +20,11 @@ export class PostingsService {
     jobTypes?: string[],
     salary?: number,
   ): Promise<[Posting[], number]> {
-    const query = this.postingsRepository.createQueryBuilder('posting');
+    const query = this.postingsRepository.createQueryBuilder('posting')
+      .leftJoinAndSelect('posting.jobType', 'jobType') // Left join to include jobType
 
     if (jobTypes && jobTypes.length > 0) {
-      query.andWhere('posting.jobType IN (:...jobTypes)', { jobTypes });
+      query.andWhere('jobType.name IN (:...jobTypes)', { jobTypes });
     }
 
     if (salary) {

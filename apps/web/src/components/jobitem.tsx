@@ -5,7 +5,6 @@ import Chip from "@mui/material/Chip";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import Posting from "./posting";
 
-
 interface JobItemProps {
   posting: Posting;
   isNew: boolean;
@@ -26,9 +25,10 @@ const JobItem: React.FC<JobItemProps> = ({ posting, isNew, isPreview }) => (
   >
     <Box>
       <Box display="flex" justifyContent="left" alignItems="top" mb={0}>
-        <Box flexBasis="5%" display="flex" alignItems="center" mr={{xs: 3, sm: 2}}>
+        <Box flexBasis="5%" display="flex" alignItems="center" mr={{ xs: 3, sm: 2 }}>
           <img
             src={(posting.companyUrl.startsWith('http') ? posting.companyUrl : `https://${posting.companyUrl}`) + "/favicon.ico"}
+            onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/default-favicon.ico'; }}
             style={{ height: "24px" }}
           />
         </Box>
@@ -38,21 +38,19 @@ const JobItem: React.FC<JobItemProps> = ({ posting, isNew, isPreview }) => (
               {!isPreview ? posting.title : posting.title || "<job title>"}
             </Link>
           </Typography>
-          <Box display="flex" flexDirection={{ xs: "column", sm: "row" }} alignItems={{xs:"left", sm: "center"}}>
+          <Box display="flex" flexDirection={{ xs: "column", sm: "row" }} alignItems={{ xs: "left", sm: "center" }}>
             <Typography variant="body2" color="textSecondary">
-                {!isPreview ? posting.company : posting.company || "<company name>"}
+              {!isPreview ? posting.company : posting.company || "<company name>"}
             </Typography>
-            <Typography variant="body2" color="text.disabled" ml={{xs: 0, sm: 2}}>
+            <Typography variant="body2" color="text.disabled" ml={{ xs: 0, sm: 2 }}>
               {(() => {
                 if (isPreview) {
-                  return "Today"
+                  return "Today";
                 }
                 const postedDate = new Date(posting.postedDate);
                 const today = new Date();
                 const diffTime = today.getTime() - postedDate.getTime();
-                const diffDays = Math.floor(
-                  diffTime / (1000 * 60 * 60 * 24),
-                );
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
                 if (diffDays === 0) return "Today";
                 if (diffDays === 1) return "Yesterday";
@@ -69,7 +67,7 @@ const JobItem: React.FC<JobItemProps> = ({ posting, isNew, isPreview }) => (
             />
           </Box>
           <Box display="flex" justifyContent="right" alignItems="center" ml={{ xs: 0, sm: 2 }}>
-            <Chip label={!isPreview ? posting.jobType : posting.jobType || "<job type>"} />
+            <Chip label={!isPreview ? posting.jobType?.name : posting.jobType?.name || "<job type>"} />
           </Box>
         </Box>
         <Box

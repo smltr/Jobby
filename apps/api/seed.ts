@@ -2,14 +2,35 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './src/app.module';
 import { PostingsService } from './src/postings/postings.service';
 import { Posting } from './src/postings/posting.entity';
+import { JobTypesService } from './src/jobtypes/jobtypes.service';
+import { JobType } from './src/jobtypes/jobtype.entity';
 
 async function seed() {
   const app = await NestFactory.createApplicationContext(AppModule);
   const postingsService = app.get(PostingsService);
+  const jobTypesService = app.get(JobTypesService);
 
+  // Clear existing postings and job types
   await postingsService.deleteAll();
-  console.log('All postings have been erased!');
+  await jobTypesService.removeAll(); // Assuming there's a similar removeAll method in JobTypesService
+  console.log('All postings and job types have been erased!');
 
+  // Define job types
+  const jobTypeNames = ['Full Stack', 'Front End', 'Back End', 'Dev Ops', 'Data', 'AI'];
+
+  // Create job types
+  const jobTypes: JobType[] = [];
+  for (const name of jobTypeNames) {
+    const jobType = await jobTypesService.create({ name });
+    jobTypes.push(jobType);
+  }
+
+  // Find job type by name
+  const findJobTypeByName = (name: string): JobType | undefined => {
+    return jobTypes.find((jobType) => jobType.name === name);
+  };
+
+  // Define postings with associated job types
   const postings: Partial<Posting>[] = [
     {
       title: 'Software Engineer',
@@ -18,8 +39,8 @@ async function seed() {
       jobLink: 'https://www.netflix.com',
       salaryStart: 100,
       salaryEnd: 150,
-      jobType: 'Full Stack',
-      country: 'US',
+      jobType: findJobTypeByName('Full Stack'),
+      country: 'USA',
       postedDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
     },
     {
@@ -29,8 +50,8 @@ async function seed() {
       jobLink: 'https://www.google.com',
       salaryStart: 120,
       salaryEnd: 160,
-      jobType: 'Front End',
-      country: 'CA',
+      jobType: findJobTypeByName('Front End'),
+      country: 'CAN',
       postedDate: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
     },
     {
@@ -40,11 +61,10 @@ async function seed() {
       jobLink: 'https://www.amazon.com',
       salaryStart: 150,
       salaryEnd: 190,
-      jobType: 'Back End',
-      country: 'UK',
+      jobType: findJobTypeByName('Back End'),
+      country: 'USA',
       postedDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
     },
-    
     {
       title: 'Data Scientist',
       company: 'Facebook',
@@ -52,11 +72,10 @@ async function seed() {
       jobLink: 'https://www.facebook.com',
       salaryStart: 130,
       salaryEnd: 170,
-      jobType: 'Data',
-      country: 'US',
+      jobType: findJobTypeByName('Data'),
+      country: 'USA',
       postedDate: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString(),
     },
-    
     {
       title: 'DevOps Engineer',
       company: 'Microsoft',
@@ -64,8 +83,8 @@ async function seed() {
       jobLink: 'https://www.microsoft.com',
       salaryStart: 140,
       salaryEnd: 180,
-      jobType: 'DevOps',
-      country: 'US',
+      jobType: findJobTypeByName('Dev Ops'),
+      country: 'USA',
       postedDate: new Date(Date.now() - 17 * 24 * 60 * 60 * 1000).toISOString(),
     },
     {
@@ -75,8 +94,8 @@ async function seed() {
       jobLink: 'https://www.twitter.com',
       salaryStart: 135,
       salaryEnd: 175,
-      jobType: 'AI',
-      country: 'US',
+      jobType: findJobTypeByName('AI'),
+      country: 'USA',
       postedDate: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
     },
     {
@@ -86,9 +105,9 @@ async function seed() {
       jobLink: 'https://www.spotify.com',
       salaryStart: 110,
       salaryEnd: 160,
-      jobType: 'Full Stack',
-      country: 'US',
-      postedDate: new Date().toISOString(),
+      jobType: findJobTypeByName('Full Stack'),
+      country: 'USA',
+      postedDate: new Date().toISOString(),    
     },
     {
       title: 'Senior Full Stack Developer',
@@ -97,9 +116,9 @@ async function seed() {
       jobLink: 'https://www.airbnb.com',
       salaryStart: 130,
       salaryEnd: 180,
-      jobType: 'Full Stack',
-      country: 'US',
-      postedDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+      jobType: findJobTypeByName('Full Stack'),
+      country: 'USA',
+      postedDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), 
     },
     {
       title: 'Backend Software Engineer',
@@ -108,9 +127,9 @@ async function seed() {
       jobLink: 'https://www.uber.com',
       salaryStart: 120,
       salaryEnd: 170,
-      jobType: 'Back End',
-      country: 'US',
-      postedDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+      jobType: findJobTypeByName('Back End'),
+      country: 'CAN',
+      postedDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),    
     },
     {
       title: 'Data Engineer',
@@ -119,9 +138,9 @@ async function seed() {
       jobLink: 'https://www.linkedin.com',
       salaryStart: 125,
       salaryEnd: 175,
-      jobType: 'Data',
-      country: 'US',
-      postedDate: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
+      jobType: findJobTypeByName('Data'),
+      country: 'USA',
+      postedDate: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),    
     },
     {
       title: 'AI Research Scientist',
@@ -130,9 +149,9 @@ async function seed() {
       jobLink: 'https://www.openai.com',
       salaryStart: 150,
       salaryEnd: 200,
-      jobType: 'AI',
-      country: 'US',
-      postedDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+      jobType: findJobTypeByName('AI'),
+      country: 'USA',
+      postedDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),    
     },
     {
       title: 'Senior DevOps Engineer',
@@ -141,9 +160,9 @@ async function seed() {
       jobLink: 'https://www.atlassian.com',
       salaryStart: 130,
       salaryEnd: 180,
-      jobType: 'DevOps',
-      country: 'AU',
-      postedDate: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
+      jobType: findJobTypeByName('Dev Ops'),
+      country: 'CAN',
+      postedDate: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),    
     },
     {
       title: 'Full Stack JavaScript Developer',
@@ -152,9 +171,9 @@ async function seed() {
       jobLink: 'https://www.slack.com',
       salaryStart: 115,
       salaryEnd: 165,
-      jobType: 'Full Stack',
-      country: 'CA',
-      postedDate: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
+      jobType: findJobTypeByName('Full Stack'),
+      country: 'CAN',
+      postedDate: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),    
     },
     {
       title: 'Backend Java Engineer',
@@ -163,9 +182,9 @@ async function seed() {
       jobLink: 'https://www.oracle.com',
       salaryStart: 130,
       salaryEnd: 180,
-      jobType: 'Back End',
-      country: 'US',
-      postedDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+      jobType: findJobTypeByName('Back End'),
+      country: 'USA',
+      postedDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),    
     },
     {
       title: 'Frontend UX/UI Developer',
@@ -174,9 +193,9 @@ async function seed() {
       jobLink: 'https://www.adobe.com',
       salaryStart: 110,
       salaryEnd: 160,
-      jobType: 'Front End',
-      country: 'US',
-      postedDate: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString(),
+      jobType: findJobTypeByName('Front End'),
+      country: 'USA',
+      postedDate: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString(),  
     },
     {
       title: 'Machine Learning Engineer',
@@ -185,17 +204,18 @@ async function seed() {
       jobLink: 'https://www.ibm.com',
       salaryStart: 140,
       salaryEnd: 190,
-      jobType: 'AI',
-      country: 'US',
+      jobType: findJobTypeByName('AI'),
+      country: 'USA',
       postedDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
     },
   ];
 
+  // Create postings
   for (const posting of postings) {
     await postingsService.create(posting);
   }
 
-  console.log('3 postings have been added!');
+  console.log('Postings have been added!');
   await app.close();
 }
 

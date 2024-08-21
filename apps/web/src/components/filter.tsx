@@ -1,20 +1,13 @@
 import React, { useState, useCallback } from "react";
 import { Box, Chip } from "@mui/material";
+import { useJobTypes } from "../hooks/useJobTypes"; // Import the hook
 
 interface FilterProps {
   onFilter: (jobTypes: string[]) => void;
 }
 
-const jobTypes = [
-  "Full Stack",
-  "Back End",
-  "Front End",
-  "Data",
-  "AI",
-  "DevOps",
-];
-
 const Filter: React.FC<FilterProps> = ({ onFilter }) => {
+  const jobTypes = useJobTypes();
   const [selectedJobTypes, setSelectedJobTypes] = useState<string[]>([]);
 
   const handleJobTypeToggle = useCallback((jobType: string) => {
@@ -33,10 +26,10 @@ const Filter: React.FC<FilterProps> = ({ onFilter }) => {
       <Box sx={{ mb: 2 }}>
         {jobTypes.map((jobType) => (
           <Chip
-            key={jobType}
-            label={jobType}
-            onClick={() => handleJobTypeToggle(jobType)}
-            color={selectedJobTypes.includes(jobType) ? "primary" : "default"}
+            key={jobType.id}
+            label={jobType.name}
+            onClick={() => handleJobTypeToggle(jobType.name)}
+            color={selectedJobTypes.includes(jobType.name) ? "primary" : "default"}
             sx={{ mr: 1, mb: 1 }}
           />
         ))}

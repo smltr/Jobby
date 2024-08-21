@@ -5,6 +5,7 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
+import { JobType } from '../jobtypes/jobtype.entity';
 
 @Entity()
 export class Posting {
@@ -24,9 +25,6 @@ export class Posting {
   salaryEnd: number;
 
   @Column()
-  jobType: string; 
-
-  @Column()
   postedDate: string;
 
   @Column()
@@ -37,4 +35,8 @@ export class Posting {
   
   @Column()
   companyUrl: string; 
+
+  @ManyToOne(() => JobType, jobType => jobType.postings, { eager: true })
+  jobType: JobType;
+
 }

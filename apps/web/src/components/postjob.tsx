@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Snackbar, Alert } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Snackbar, Alert, MenuItem } from "@mui/material"; // Import MenuItem for dropdown
 import axios from "axios";
 import {
   Button,
@@ -12,9 +12,11 @@ import {
   Typography,
 } from "@mui/material";
 import JobItem from "./jobitem";
-import Posting from "./posting";
+import Posting, { JobType } from "./posting"; // Import the JobType interface
+import { useJobTypes } from "../hooks/useJobTypes";
 
-const PostJob: React.FC = () => {
+const PostJob = () => {
+  const jobTypes = useJobTypes();
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [open, setOpen] = useState(false);
@@ -23,7 +25,7 @@ const PostJob: React.FC = () => {
     company: "",
     salaryStart: "",
     salaryEnd: "",
-    jobType: "",
+    jobType: jobTypes[0] || {}, // Initialize with the first job type or an empty object
     country: "",
     jobLink: "",
     postedDate: new Date(Date.now()).toISOString(),
@@ -31,12 +33,20 @@ const PostJob: React.FC = () => {
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
+  useEffect(() => {
+    if (jobTypes.length > 0) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        jobType: jobTypes[0],
+      }));
+    }
+  }, [jobTypes]);
+
   const validate = () => {
     let tempErrors: { [key: string]: string } = {};
     if (!formData.title) tempErrors.title = "Title is required";
     if (!formData.company) tempErrors.company = "Company is required";
-    if (!formData.salaryStart)
-      tempErrors.salaryStart = "Salary start is required";
+    if (!formData.salaryStart) tempErrors.salaryStart = "Salary start is required";
     if (!formData.salaryEnd) tempErrors.salaryEnd = "Salary end is required";
     if (!formData.jobType) tempErrors.jobType = "Job type is required";
     if (!formData.country) tempErrors.country = "Country is required";
@@ -46,9 +56,38 @@ const PostJob: React.FC = () => {
     return Object.keys(tempErrors).length === 0;
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTextInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSelectChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    if (name === "jobType") {
+      const selectedJobType = jobTypes.find((jt) => jt.name === value);
+      if (selectedJobType) {
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          jobType: selectedJobType,
+        }));
+      }
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
+
+  const handleGenericChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    if (e.target instanceof HTMLSelectElement) {
+      handleSelectChange(e as React.ChangeEvent<HTMLSelectElement>);
+    } else {
+      handleTextInputChange(e);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -58,15 +97,20 @@ const PostJob: React.FC = () => {
       const response = await axios.post("/api/postings", formData);
       setOpen(false);
       resetForm();
-      setSnackbarMessage(`New job posted: ${response.data.title} at ${response.data.company}`);
+      setSnackbarMessage(
+        `New job posted: ${response.data.title} at ${response.data.company}`
+      );
       setSnackbarOpen(true);
     } catch (err) {
       alert("Failed to post job");
     }
   };
 
-  const handleSnackbarClose = (_?: React.SyntheticEvent | Event, reason?: string) => {
-    if (reason === 'clickaway') {
+  const handleSnackbarClose = (
+    _?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    if (reason === "clickaway") {
       return;
     }
     setSnackbarOpen(false);
@@ -78,7 +122,7 @@ const PostJob: React.FC = () => {
       company: "",
       salaryStart: "",
       salaryEnd: "",
-      jobType: "",
+      jobType: {id: 0, name: ""}, // Reset to the first job type
       country: "",
       jobLink: "",
       postedDate: new Date(Date.now()).toISOString(),
@@ -92,11 +136,16 @@ const PostJob: React.FC = () => {
     id: 0,
     salaryStart: formData.salaryStart || "0",
     salaryEnd: formData.salaryEnd || "0",
-  } as Posting;
+  };
 
   return (
     <>
-      <Button variant="contained" disableElevation color="primary" onClick={() => setOpen(true)}>
+      <Button
+        variant="contained"
+        disableElevation
+        color="primary"
+        onClick={() => setOpen(true)}
+      >
         Post a Job
       </Button>
       <Dialog
@@ -112,28 +161,28 @@ const PostJob: React.FC = () => {
         <DialogContent>
           <Box mb={2}>
             <Typography variant="h6">Preview</Typography>
-            <JobItem posting={previewPosting} isNew={false} isPreview={true}/>
+            <JobItem posting={previewPosting} isNew={false} isPreview={true} />
           </Box>
           <form onSubmit={handleSubmit} noValidate>
+            {/* Other TextField inputs */}
             <TextField
               fullWidth
               margin="normal"
               name="title"
               label="Job Title"
-              value={formData.title}
-              onChange={handleChange}
+              value={formData.title || ""}
+              onChange={handleGenericChange}
               required
               error={!!errors.title}
               helperText={errors.title}
             />
-
             <TextField
               fullWidth
               margin="normal"
               name="jobLink"
               label="Job Posting Link"
-              value={formData.jobLink}
-              onChange={handleChange}
+              value={formData.jobLink || ""}
+              onChange={handleGenericChange}
               required
               error={!!errors.jobLink}
               helperText={errors.jobLink}
@@ -143,8 +192,8 @@ const PostJob: React.FC = () => {
               margin="normal"
               name="company"
               label="Company Name"
-              value={formData.company}
-              onChange={handleChange}
+              value={formData.company || ""}
+              onChange={handleGenericChange}
               required
               error={!!errors.company}
               helperText={errors.company}
@@ -154,8 +203,8 @@ const PostJob: React.FC = () => {
               margin="normal"
               name="companyUrl"
               label="Company URL"
-              value={formData.companyUrl}
-              onChange={handleChange}
+              value={formData.companyUrl || ""}
+              onChange={handleGenericChange}
               required
               error={!!errors.companyUrl}
               helperText={errors.companyUrl}
@@ -167,8 +216,8 @@ const PostJob: React.FC = () => {
                 label="Salary Start (in k)"
                 type="number"
                 inputProps={{ maxLength: 3 }}
-                value={formData.salaryStart}
-                onChange={handleChange}
+                value={formData.salaryStart || ""}
+                onChange={handleGenericChange}
                 required
                 error={!!errors.salaryStart}
                 helperText={errors.salaryStart}
@@ -180,8 +229,8 @@ const PostJob: React.FC = () => {
                 label="Salary End (in k)"
                 type="number"
                 inputProps={{ maxLength: 3 }}
-                value={formData.salaryEnd}
-                onChange={handleChange}
+                value={formData.salaryEnd || ""}
+                onChange={handleGenericChange}
                 required
                 error={!!errors.salaryEnd}
                 helperText={errors.salaryEnd}
@@ -194,23 +243,19 @@ const PostJob: React.FC = () => {
               margin="normal"
               name="jobType"
               label="Job Type"
-              value={formData.jobType}
-              onChange={handleChange}
+              value={(formData.jobType as JobType)?.name || ""}
+              onChange={handleGenericChange}
               required
-              variant="outlined"
               error={!!errors.jobType}
               helperText={errors.jobType}
-              SelectProps={{
-                native: true,
-              }}
+              SelectProps={{ native: true }}
             >
-              <option value=""></option>
-              <option value="Full Stack">Full Stack</option>
-              <option value="Back End">Back End</option>
-              <option value="Front End">Front End</option>
-              <option value="Data">Data</option>
-              <option value="AI">AI</option>
-              <option value="DevOps">DevOps</option>
+              <option value=""></option> 
+              {jobTypes.map((jobType) => (
+                <option key={jobType.id} value={jobType.name}>
+                  {jobType.name}
+                </option>
+              ))}
             </TextField>
             <TextField
               select
@@ -218,21 +263,17 @@ const PostJob: React.FC = () => {
               margin="normal"
               name="country"
               label="Country"
-              value={formData.country}
-              onChange={handleChange}
+              value={formData.country || ""}
+              onChange={handleGenericChange}
               required
               error={!!errors.country}
               helperText={errors.country}
-              SelectProps={{
-                native: true,
-              }}
+              SelectProps={{ native: true }}
             >
-              <option value=""></option>
+              <option value=""></option> 
               <option value="USA">USA</option>
               <option value="CAN">CAN</option>
-              <option value="MEX">MEX</option>
             </TextField>
-            
           </form>
         </DialogContent>
         <DialogActions>
@@ -253,9 +294,13 @@ const PostJob: React.FC = () => {
         open={snackbarOpen}
         autoHideDuration={6000}
         onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
       >
-        <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
+        <Alert
+          onClose={handleSnackbarClose}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
           {snackbarMessage}
         </Alert>
       </Snackbar>

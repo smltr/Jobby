@@ -70,6 +70,7 @@ const JobList: React.FC<JobsProps> = ({ filters }) => {
             <JobItem
               posting={posting}
               isNew={newPostingIds.includes(posting.id)}
+              isPreview={false}
             />
           </div>
         </Fade>

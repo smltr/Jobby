@@ -18,9 +18,7 @@ My goal was to check all of the boxes given for the test while keeping scope tig
 
 As mentioned I tried to keep things simple and features to a minimum so I could deliver sometihng polished, so there are definitely things I left out. If I had more time or this was a real project, I would definitely:
 
-- Add testing
 - Add features such as search, job description, and user accounts to keep track of applications/applicants
 - Add QOL features such as ability to click on a job to highlight it in some way so user can read through list and keep track of what they want to apply to without having to 'save' job somewhere
-- Refine UI, for example making the post new job more compact, test responsiveness more
-- Add more of my own twist on the idea of a job site in general. For example, I like the idea of requiring a one sentence description of the job to be written by the poster, as well as a three adjective description of the ideal candidate (Curious, Experienced, Hardworking). Maybe require the same of candidates for their profile and don't allow for cover letters. I've also played around with the idea of 'dollar jobs' in that every posting/application requires a dollar to be paid. This would limit a lot of spam on both sides and give confidence to the process without requiring things like cover letters.
+- Refine UI, for example making the post new job more compact
 
