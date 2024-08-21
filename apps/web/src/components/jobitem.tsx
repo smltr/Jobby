@@ -34,7 +34,7 @@ const JobItem: React.FC<JobItemProps> = ({ posting, isNew, isPreview }) => (
         </Box>
         <Box>
           <Typography variant="body1" sx={{ fontWeight: "500" }}>
-            <Link href={posting.jobLink} target="_blank" rel="noopener noreferrer" underline="hover" color="inherit">
+            <Link href={posting.jobLink.startsWith('http') ? posting.jobLink : `https://${posting.jobLink}`} target="_blank" rel="noopener noreferrer" underline="hover" color="inherit">
               {!isPreview ? posting.title : posting.title || "<job title>"}
             </Link>
           </Typography>
