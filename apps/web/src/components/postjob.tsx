@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Snackbar, Alert, MenuItem } from "@mui/material"; // Import MenuItem for dropdown
+import { Snackbar, Alert } from "@mui/material"; // Import MenuItem for dropdown
 import axios from "axios";
 import {
   Button,
@@ -86,7 +86,7 @@ const PostJob = () => {
     if (e.target instanceof HTMLSelectElement) {
       handleSelectChange(e as React.ChangeEvent<HTMLSelectElement>);
     } else {
-      handleTextInputChange(e);
+      handleTextInputChange(e as React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>);
     }
   };
 
@@ -136,8 +136,14 @@ const PostJob = () => {
     id: 0,
     salaryStart: formData.salaryStart || "0",
     salaryEnd: formData.salaryEnd || "0",
+    title: formData.title || "",
+    company: formData.company || "",
+    jobType: formData.jobType || { id: 0, name: "" },
+    country: formData.country || "",
+    postedDate: formData.postedDate || new Date(Date.now()).toISOString(),
+    companyUrl: formData.companyUrl || "",
+    jobLink: formData.jobLink || ""
   };
-
   return (
     <>
       <Button
