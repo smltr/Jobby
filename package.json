@@ -10,7 +10,7 @@
     "start:dev": "nx run-many --output-style stream -t start:dev -p api web",
     "start": "nx run-many --output-style stream -t start -p api web"
   },
-  "author": "Percipio Health, Inc. / Sam Trouy",
+  "author": "Sam Trouy",
   "license": "UNLICENSED",
   "devDependencies": {
     "nx": "^18.2.1"
